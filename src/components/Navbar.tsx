@@ -81,14 +81,14 @@ export function Navbar() {
 
             <div className="flex items-center gap-4">
               <Button
-                render={<Link href="/login" />}
+                render={<Link href="/sign-in" />}
                 nativeButton={false}
                 className="h-[52px] rounded-xl bg-transparent px-6 text-lg font-semibold text-[#5c53fe] hover:bg-white/5"
               >
                 Sign In
               </Button>
               <Button
-                render={<Link href="/register" />}
+                render={<Link href="/sign-up" />}
                 nativeButton={false}
                 className="h-[52px] rounded-xl bg-[#5c53fe] px-6 text-lg text-white ring-1 ring-[#090a15] hover:bg-[#4b45e0]"
               >
@@ -145,14 +145,14 @@ export function Navbar() {
 
                 <div className="flex flex-col gap-3">
                   <Button
-                    render={<Link href="/login" />}
+                    render={<Link href="/sign-in" />}
                     nativeButton={false}
                     className="h-[52px] rounded-xl bg-transparent text-lg font-semibold text-[#5c53fe] hover:bg-white/5"
                   >
                     Sign In
                   </Button>
                   <Button
-                    render={<Link href="/register" />}
+                    render={<Link href="/sign-up" />}
                     nativeButton={false}
                     className="h-[52px] rounded-xl bg-[#5c53fe] text-lg text-white ring-1 ring-[#090a15] hover:bg-[#4b45e0]"
                   >
