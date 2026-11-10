@@ -6,10 +6,13 @@ import { useState, type FormEvent } from "react";
 
 export type AuthMode = "sign-in" | "sign-up";
 
+export type AuthRole = "seeker" | "recruiter" | "admin";
+
 export type AuthFormValues = {
   name?: string;
   email: string;
   password: string;
+  role?: AuthRole;
 };
 
 // CHANGED: onSubmit এখন form-এর values গ্রহণ করবে
@@ -17,6 +20,13 @@ type AuthFormProps = {
   mode: AuthMode;
   onSubmit: (values: AuthFormValues) => Promise<void>;
 };
+
+// NEW: Sign Up form-এ role selector-এর options
+const ROLES: { value: AuthRole; label: string }[] = [
+  { value: "seeker", label: "Job Seeker" },
+  { value: "recruiter", label: "Recruiter" },
+  { value: "admin", label: "Admin" },
+];
 
 const MODES = [
   {
@@ -58,6 +68,9 @@ const labelClasses =
 export function AuthForm({ mode, onSubmit }: AuthFormProps) {
   const copy = COPY[mode];
 
+  // NEW: Sign Up form-এ user-এর role ট্র্যাক করার state (default: seeker)
+  const [role, setRole] = useState<AuthRole>("seeker");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -76,6 +89,9 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
         setErrorMessage("Please enter your full name.");
         return;
       }
+      // NEW: role hidden input থেকে সংগ্রহ করে form values-এ যোগ করা
+      const roleValue = String(formData.get("role") ?? "seeker") as AuthRole;
+      values.role = roleValue;
     }
     setErrorMessage(null);
     setIsSubmitting(true);
@@ -149,6 +165,47 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
               disabled={isSubmitting}
               className={inputClasses}
             />
+          </div>
+        )}
+
+        {/* NEW: Sign Up-এ role selector (segmented control) */}
+        {mode === "sign-up" && (
+          <div className="mb-5">
+            {/* role শুধুমাত্র state-এ থাকলেও submit-এর সাথে যাবে */}
+            <input type="hidden" name="role" value={role} />
+
+            <span
+              id="role-label"
+              className="mb-2 block text-sm text-[#ededeff2]"
+            >
+              I want to join as
+            </span>
+
+            <div
+              role="radiogroup"
+              aria-labelledby="role-label"
+              className="grid grid-cols-3 gap-2 rounded-xl bg-[#101010] p-1 ring-1 ring-white/20"
+            >
+              {ROLES.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={role === value}
+                  onClick={() => setRole(value)}
+                  disabled={isSubmitting}
+                  className={cn(
+                    "rounded-lg px-2 py-2 text-xs font-medium transition-colors sm:text-sm",
+                    role === value
+                      ? "bg-[#5c53fe] text-white"
+                      : "text-[#ededeff2] hover:bg-white/5 hover:text-white",
+                    isSubmitting && "cursor-not-allowed opacity-60",
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 

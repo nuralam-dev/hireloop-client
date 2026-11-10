@@ -12,6 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -52,6 +53,19 @@ const linkClasses = cn(
 
 export function Navbar() {
   const pathname = usePathname();
+  const { data: session } = authClient.useSession();
+  console.log(session, "user session");
+
+  const handleSignOut = async () => {
+    const { error } = await authClient.signOut();
+
+    if (error) {
+      console.error("Sign out failed:", error.message);
+      return;
+    }
+
+    console.log("Successfully signed out");
+  };
 
   return (
     <header className="sticky top-0 z-40 px-4 pt-4 sm:px-6">
@@ -80,20 +94,37 @@ export function Navbar() {
             <span aria-hidden="true" className="h-px w-6 bg-[#a8a8a8]/70" />
 
             <div className="flex items-center gap-4">
-              <Button
-                render={<Link href="/sign-in" />}
-                nativeButton={false}
-                className="h-[52px] rounded-xl bg-transparent px-6 text-lg font-semibold text-[#5c53fe] hover:bg-white/5"
-              >
-                Sign In
-              </Button>
-              <Button
-                render={<Link href="/sign-up" />}
-                nativeButton={false}
-                className="h-[52px] rounded-xl bg-[#5c53fe] px-6 text-lg text-white ring-1 ring-[#090a15] hover:bg-[#4b45e0]"
-              >
-                Get Started
-              </Button>
+              {session?.user ? (
+                <>
+                  <span className="text-white">
+                    Welcome {session.user.name}
+                  </span>
+                  <Button
+                    onClick={handleSignOut}
+                    nativeButton={false}
+                    className="h-[52px] rounded-xl bg-transparent px-6 text-lg font-semibold text-[#5c53fe] hover:bg-white/5"
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    render={<Link href="/sign-in" />}
+                    nativeButton={false}
+                    className="h-[52px] rounded-xl bg-transparent px-6 text-lg font-semibold text-[#5c53fe] hover:bg-white/5"
+                  >
+                    Sign In
+                  </Button>
+                  <Button
+                    render={<Link href="/sign-up" />}
+                    nativeButton={false}
+                    className="h-[52px] rounded-xl bg-[#5c53fe] px-6 text-lg text-white ring-1 ring-[#090a15] hover:bg-[#4b45e0]"
+                  >
+                    Get Started
+                  </Button>
+                </>
+              )}
             </div>
           </div>
 

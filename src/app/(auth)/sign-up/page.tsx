@@ -2,14 +2,18 @@
 import AuthForm, { AuthFormValues } from "@/components/auth/AuthForm";
 import { AuthShell } from "@/components/auth/AuthPageShell";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
   const handleSignUp = async (values: AuthFormValues) => {
     const { data, error } = await authClient.signUp.email({
-      name: values.name as string, // required, The name of the user.
-      email: values.email, // required, The email address of the user.
-      password: values.password, // required, The password of the user. It should be at least 8 characters long and max 128 by default.
-      callbackURL: "/", // An optional URL to redirect to after the user signs up.
+      name: values.name as string,
+      email: values.email,
+      password: values.password,
+      // NEW: Sign Up form থেকে পাওয়া role better-auth-এ পাঠানো হয়
+      role: values.role ?? "seeker",
+      callbackURL: "/",
     });
 
     if (error) {
@@ -18,6 +22,9 @@ export default function SignupPage() {
 
     if (data) {
       console.log("Signup successful");
+    }
+    if(!error){
+      router.push("/")
     }
   };
 
