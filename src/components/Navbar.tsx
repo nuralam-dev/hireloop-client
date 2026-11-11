@@ -54,7 +54,17 @@ const linkClasses = cn(
 export function Navbar() {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
-  console.log(session, "user session");
+
+  
+  const links = session?.user
+    ? [
+        ...NAV_LINKS,
+        {
+          label: "Dashboard",
+          href: `/dashboard/${session.user.role ?? "seeker"}`,
+        },
+      ]
+    : [...NAV_LINKS];
 
   const handleSignOut = async () => {
     const { error } = await authClient.signOut();
@@ -79,7 +89,7 @@ export function Navbar() {
           {/* Desktop */}
           <div className="hidden items-center gap-6 md:flex">
             <div className="flex items-center gap-10">
-              {NAV_LINKS.map((link) => (
+              {links.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -154,7 +164,7 @@ export function Navbar() {
 
               <div className="flex flex-col p-6">
                 <div className="flex flex-col gap-6">
-                  {NAV_LINKS.map((link) => (
+                  {links.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}

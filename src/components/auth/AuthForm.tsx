@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
@@ -70,6 +71,9 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
 
   // NEW: Sign Up form-এ user-এর role ট্র্যাক করার state (default: seeker)
   const [role, setRole] = useState<AuthRole>("seeker");
+
+  // NEW: password দেখানো/লুকানোর toggle state
+  const [showPassword, setShowPassword] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -247,24 +251,43 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
             )}
           </label>
 
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            minLength={mode === "sign-up" ? 8 : undefined}
-            autoComplete={
-              mode === "sign-up" ? "new-password" : "current-password"
-            }
-            placeholder={
-              mode === "sign-up"
-                ? "At least 8 characters"
-                : "Enter your password"
-            }
-            // NEW: Submit চলাকালে input disabled
-            disabled={isSubmitting}
-            className={inputClasses}
-          />
+          {/* NEW: password show/hide toggle — input-এর ভেতরে ডানদিকে চোখের বাটন */}
+          <div className="relative">
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              required
+              minLength={mode === "sign-up" ? 8 : undefined}
+              autoComplete={
+                mode === "sign-up" ? "new-password" : "current-password"
+              }
+              placeholder={
+                mode === "sign-up"
+                  ? "At least 8 characters"
+                  : "Enter your password"
+              }
+              // NEW: Submit চলাকালে input disabled
+              disabled={isSubmitting}
+              className={cn(inputClasses, "pr-12")}
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-pressed={showPassword}
+              // NEW: Submit চলাকালে toggle-ও disabled
+              disabled={isSubmitting}
+              className="absolute top-1/2 right-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-[#ededeff2]/70 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {showPassword ? (
+                <EyeOff className="size-5" aria-hidden="true" />
+              ) : (
+                <Eye className="size-5" aria-hidden="true" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* NEW: Authentication error message UI */}
